@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from fastapi import FastAPI, HTTPException
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
+import uvicorn # Add this import
 from contextlib import asynccontextmanager
 from dotenv import load_dotenv
 
@@ -96,3 +97,7 @@ async def root():
 # Note: If you run this with uvicorn, use --reload carefully during development,
 # as the MCP server processes might not restart cleanly every time.
 # Example: uvicorn server:app --host 0.0.0.0 --port 8000
+
+if __name__ == "__main__":
+    # Run the FastAPI app using uvicorn when the script is executed directly
+    uvicorn.run(app, host="0.0.0.0", port=8000)

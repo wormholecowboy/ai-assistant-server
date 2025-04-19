@@ -1,11 +1,12 @@
 pydantic
 fastapi[standard]
-google-genai
+uvicorn # Added explicitly as it's used directly in server.py
+# google-genai # Removed as it seems unused
 pydantic==2.11.1
 pydantic-ai==0.0.46
-pydantic-ai-slim==0.0.46
-pydantic-graph==0.0.46
-pydantic-settings==2.8.1
+pydantic-ai-slim==0.0.46 # Potentially unused?
+pydantic-graph==0.0.46 # Potentially unused?
+pydantic-settings==2.8.1 # Potentially unused?
 pydantic_core==2.33.0
 mcp==1.6.0
 mdurl==0.1.2
