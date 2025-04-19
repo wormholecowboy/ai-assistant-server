@@ -3,9 +3,12 @@ from fastapi import FastAPI, HTTPException
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
+from dotenv import load_dotenv
 
-# Import necessary components from orchestrator
-from orchestrator import primary_agent, start_mcp_servers, stop_mcp_servers
+# Import primary agent from orchestrator
+from orchestrator import primary_agent
+# Import MCP server management functions from the new subagents module
+from agents.subagents import start_mcp_servers, stop_mcp_servers
 
 load_dotenv()
 # Remove GEMINI specific setup
