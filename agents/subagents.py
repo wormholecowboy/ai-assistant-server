@@ -12,9 +12,9 @@ load_dotenv()
 
 # ========== Helper function to get model configuration ==========
 def get_model():
-    llm = os.getenv('MODEL_CHOICE', 'gpt-4o-mini')
-    base_url = os.getenv('BASE_URL', 'https://api.openai.com/v1')
-    api_key = os.getenv('LLM_API_KEY', 'no-api-key-provided')
+    llm = os.getenv('MODEL_CHOICE', 'gemini-2.5.pro-exp-03-25')
+    base_url = os.getenv('BASE_URL', 'https://generativelanguage.googleapis.com')
+    api_key = os.getenv('GEMINI_API_KEY', 'no-api-key-provided')
 
     return OpenAIModel(llm, provider=OpenAIProvider(base_url=base_url, api_key=api_key))
 
@@ -37,11 +37,11 @@ github_server = MCPServerStdio(
     env={"GITHUB_PERSONAL_ACCESS_TOKEN": os.getenv("GITHUB_TOKEN")}
 )
 
-# Firecrawl MCP server
-firecrawl_server = MCPServerStdio(
-    'npx', ['-y', 'firecrawl-mcp'],
-    env={"FIRECRAWL_API_KEY": os.getenv("FIRECRAWL_API_KEY")}
-)
+# # Firecrawl MCP server (Commented out)
+# firecrawl_server = MCPServerStdio(
+#     'npx', ['-y', 'firecrawl-mcp'],
+#     env={"FIRECRAWL_API_KEY": os.getenv("FIRECRAWL_API_KEY")}
+# )
 
 # ========== Create subagents with their MCP servers ==========
 
@@ -66,12 +66,12 @@ github_agent = Agent(
     mcp_servers=[github_server]
 )
 
-# Firecrawl agent
-firecrawl_agent = Agent(
-    get_model(),
-    system_prompt="You are a web crawling specialist. Help users extract data from websites.",
-    mcp_servers=[firecrawl_server]
-)
+# # Firecrawl agent (Commented out)
+# firecrawl_agent = Agent(
+#     get_model(),
+#     system_prompt="You are a web crawling specialist. Help users extract data from websites.",
+#     mcp_servers=[firecrawl_server]
+# )
 
 # ========== MCP Server Management ==========
 # Store the stack globally to manage it across lifespan events
@@ -84,7 +84,7 @@ async def start_mcp_servers():
     await _mcp_stack.enter_async_context(brave_agent.run_mcp_servers())
     await _mcp_stack.enter_async_context(filesystem_agent.run_mcp_servers())
     await _mcp_stack.enter_async_context(github_agent.run_mcp_servers())
-    await _mcp_stack.enter_async_context(firecrawl_agent.run_mcp_servers())
+    # await _mcp_stack.enter_async_context(firecrawl_agent.run_mcp_servers()) # Commented out
     print("All MCP servers started successfully!")
 
 async def stop_mcp_servers():

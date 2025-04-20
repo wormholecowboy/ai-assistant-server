@@ -10,7 +10,7 @@ from agents.subagents import (
     brave_agent,
     filesystem_agent,
     github_agent,
-    firecrawl_agent,
+    # firecrawl_agent, # Commented out
     get_model
 )
 
@@ -75,21 +75,21 @@ async def use_github_agent(query: str) -> dict[str, str]:
     result = await github_agent.run(query)
     return {"result": str(result.data) if result.data else "No result from GitHub agent."}
 
-@primary_agent.tool_plain
-async def use_firecrawl_agent(query: str) -> dict[str, str]:
-    """
-    Crawl and analyze websites using the Firecrawl subagent.
-    Use this tool when the user needs to extract data from websites or perform web scraping.
-
-    Args:
-        query: The instruction for the Firecrawl agent.
-
-    Returns:
-        The response from the Firecrawl agent.
-    """
-    print(f"Calling Firecrawl agent with query: {query}")
-    result = await firecrawl_agent.run(query)
-    return {"result": str(result.data) if result.data else "No result from Firecrawl agent."}
+# @primary_agent.tool_plain # Commented out
+# async def use_firecrawl_agent(query: str) -> dict[str, str]:
+#     """
+#     Crawl and analyze websites using the Firecrawl subagent.
+#     Use this tool when the user needs to extract data from websites or perform web scraping.
+#
+#     Args:
+#         query: The instruction for the Firecrawl agent.
+#
+#     Returns:
+#         The response from the Firecrawl agent.
+#     """
+#     print(f"Calling Firecrawl agent with query: {query}")
+#     result = await firecrawl_agent.run(query)
+#     return {"result": str(result.data) if result.data else "No result from Firecrawl agent."}
 
 # Note: MCP Server Management (start_mcp_servers, stop_mcp_servers, _mcp_stack)
 # has been moved to agents/subagents.py

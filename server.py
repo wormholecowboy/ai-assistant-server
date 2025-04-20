@@ -31,7 +31,6 @@ app = FastAPI(lifespan=lifespan) # Apply the lifespan manager
 origins = [
     "http://localhost:8080",
     "http://127.0.0.1:8080",
-    # Add other origins if needed
 ]
 
 app.add_middleware(
