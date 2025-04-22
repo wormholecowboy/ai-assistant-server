@@ -13,7 +13,7 @@ load_dotenv()
 
 # ========== Helper function to get model configuration ==========
 def get_model():
-    llm = os.getenv('MODEL_CHOICE', 'gemini-2.5.pro-exp-03-25')
+    llm = 'gemini-2.5-pro-exp-03-25'
     base_url = os.getenv('BASE_URL', 'https://generativelanguage.googleapis.com')
     api_key = os.getenv('GEMINI_API_KEY', 'no-api-key-provided')
 
