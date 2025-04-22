@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 
 from pydantic_ai.providers.openai import OpenAIProvider
 from pydantic_ai.models.openai import OpenAIModel
+from pydantic_ai.models.gemini import GeminiModel
 from pydantic_ai.mcp import MCPServerStdio
 from pydantic_ai import Agent
 
@@ -16,7 +17,7 @@ def get_model():
     base_url = os.getenv('BASE_URL', 'https://generativelanguage.googleapis.com')
     api_key = os.getenv('GEMINI_API_KEY', 'no-api-key-provided')
 
-    return OpenAIModel(llm, provider=OpenAIProvider(base_url=base_url, api_key=api_key))
+    return GeminiModel(llm, provider="google-gla")
 
 # ========== Set up MCP servers for each service ==========
 
