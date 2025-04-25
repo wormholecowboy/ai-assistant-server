@@ -18,15 +18,11 @@ This document outlines the tasks required to implement the DatabaseAgent as desc
         * `supabase`
         * `python-dotenv`
         * `any LLM library (e.g., openai, anthropic)`
-    * [ ]  Install the dependencies using `pip install -r requirements.txt`.
+    * [x]  Install the dependencies using `pip install -r requirements.txt`.
 
 * **Task 3: Register DatabaseAgent with Orchestrator**
-    * [ ]  Add DatabaseAgent as a tool/subagent to the orchestrator so it can be called from the main orchestration agent.
+    * [x]  Add DatabaseAgent as a tool/subagent to the orchestrator so it can be called from the main orchestration agent.
     * [ ]  Ensure the orchestrator can route relevant tasks to DatabaseAgent.
-
-* **Task 4: Environment Configuration**
-    * [ ]  Document required environment variables in `.env.example` (Supabase URL, key, etc).
-    * [ ]  Ensure `.env` is gitignored.
 
 * **Task 5: Requirements Review**
     * [ ]  Review and remove any unused dependencies from `requirements.txt`.

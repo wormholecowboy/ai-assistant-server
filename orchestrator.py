@@ -1,11 +1,8 @@
 from __future__ import annotations
-from typing import Dict
 from dotenv import load_dotenv
-from rich.markdown import Markdown # Keep for potential future debugging/logging
-from rich.console import Console # Keep for potential future debugging/logging
 from pydantic_ai import Agent
 
-# Import subagents and model helper from the new module
+from agents.subagents import register_database_agent_tools
 from agents.subagents import (
     brave_agent,
     filesystem_agent,
@@ -16,7 +13,6 @@ from agents.subagents import (
 
 load_dotenv()
 
-# ========== Create the primary orchestration agent ==========
 primary_agent = Agent(
     get_model(),
     system_prompt="""You are a primary orchestration agent that can call upon specialized subagents 
@@ -24,11 +20,7 @@ primary_agent = Agent(
     Analyze the user request and delegate the work to the appropriate subagent."""
 )
 
-# Register DatabaseAgent tools so the orchestrator can call them
-from agents.subagents import register_database_agent_tools
 register_database_agent_tools(primary_agent)
-
-# ========== Define tools for the primary agent to call subagents ==========
 
 @primary_agent.tool_plain
 async def use_brave_search_agent(query: str) -> dict[str, str]:

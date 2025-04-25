@@ -5,24 +5,18 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn # Add this import
 from contextlib import asynccontextmanager
 from dotenv import load_dotenv
+from pydantic import ConfigDict
 
-# Import primary agent from orchestrator
 from orchestrator import primary_agent
-# Import MCP server management functions from the new subagents module
 from agents.subagents import start_mcp_servers, stop_mcp_servers
 
 load_dotenv()
-# Remove GEMINI specific setup
-# GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-# gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup: Start the MCP servers
     print("Application startup: Initializing MCP servers...")
     await start_mcp_servers()
     yield
-    # Shutdown: Stop the MCP servers
     print("Application shutdown: Cleaning up MCP servers...")
     await stop_mcp_servers()
 
@@ -36,26 +30,24 @@ origins = [
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
-    allow_credentials=True,  # Important if you're using cookies or sessions
-    allow_methods=["*"],  # Allows all methods (GET, POST, PUT, DELETE, etc.) - or specify what you want
-    allow_headers=["*"],  # Allows all headers - or list specific headers for better security
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
-from pydantic import ConfigDict
 
 class Question(BaseModel):
-    model_config = ConfigDict(extra='forbid')
+    model_config = ConfigDict(extra=None)
     message: str
 
-# Define a response model for clarity (optional but good practice)
 class Answer(BaseModel):
-    model_config = ConfigDict(extra='forbid')
-    response: str | dict # Agent might return string or dict
+    model_config = ConfigDict(extra=None)
+    response: str | dict
 
 @app.post("/ask", response_model=Answer)
 async def ask(question: Question):
     """
-    Receives a question and routes it to the primary orchestration agent.
+    Receives a question or command and routes it to the primary orchestration agent.
     """
     if not question.message:
         raise HTTPException(status_code=400, detail="Message cannot be empty")
@@ -66,12 +58,7 @@ async def ask(question: Question):
         # If you needed streaming, you'd use primary_agent.run_stream()
         # and return a StreamingResponse from FastAPI
         result = await primary_agent.run(question.message)
-
-        # The agent's run method returns a RunResult object.
-        # The final answer is typically in result.data
         print(f"Primary agent response: {result.data}")
-
-        # Ensure the response data is suitable for the Answer model
         response_data = result.data if result.data is not None else "Agent did not return data."
 
         # If the agent returns a dict (e.g., from a tool call),
@@ -81,7 +68,6 @@ async def ask(question: Question):
              return Answer(response=response_data)
         else:
              return Answer(response=str(response_data))
-
 
     except Exception as e:
         print(f"Error processing request with primary agent: {e}")
@@ -99,7 +85,6 @@ async def root():
 
 # Note: If you run this with uvicorn, use --reload carefully during development,
 # as the MCP server processes might not restart cleanly every time.
-# Example: uvicorn server:app --host 0.0.0.0 --port 8000
 
 if __name__ == "__main__":
     # Run the FastAPI app using uvicorn when the script is executed directly
