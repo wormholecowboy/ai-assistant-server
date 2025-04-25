@@ -5,14 +5,14 @@ This document outlines the tasks required to implement the DatabaseAgent as desc
 ## I. Project Setup and Core Components
 
 * **Task 1: Set up Project Structure**
-    * [ ]  Create the following directories:
+    * [x]  Create the following directories:
         * `database_agent/` (for the main agent code)
         * `models/` (for Pydantic models)
         * `utils/` (for utility functions)
         * `tests/` (for unit and integration tests)
 
 * **Task 2: Install Dependencies**
-    * [ ]  Add the following packages to `requirements.txt`:
+    * [x]  Add the following packages to `requirements.txt`:
         * `pydantic`
         * `pydantic_ai`
         * `supabase`
@@ -20,44 +20,49 @@ This document outlines the tasks required to implement the DatabaseAgent as desc
         * `any LLM library (e.g., openai, anthropic)`
     * [ ]  Install the dependencies using `pip install -r requirements.txt`.
 
+* **Task 3: Register DatabaseAgent with Orchestrator**
+    * [ ]  Add DatabaseAgent as a tool/subagent to the orchestrator so it can be called from the main orchestration agent.
+    * [ ]  Ensure the orchestrator can route relevant tasks to DatabaseAgent.
+
+* **Task 4: Environment Configuration**
+    * [ ]  Document required environment variables in `.env.example` (Supabase URL, key, etc).
+    * [ ]  Ensure `.env` is gitignored.
+
+* **Task 5: Requirements Review**
+    * [ ]  Review and remove any unused dependencies from `requirements.txt`.
+
 ## II. Database Interaction and Model Generation
 
-* **Task 4: Implement Supabase Client Initialization**
-    * [ ]  Create a module in `database_agent/supabase_client.py`.
-    * [ ]  Implement a function to initialize the Supabase client using the `supabase-py` library and the environment variables.
-    * [ ]  Ensure the client is a singleton or globally accessible.
+* **Task 5: Implement Supabase Client Initialization**
+    * [x]  Create a module in `database_agent/supabase_client.py`.
+    * [x]  Implement a function to initialize the Supabase client using the `supabase-py` library and the environment variables.
+    * [x]  Ensure the client is a singleton or globally accessible.
 
-* **Task 5: Implement Schema Introspection**
-    * [ ]  Create a module in `database_agent/schema_inspector.py`.
+* **Task 6: Implement Schema Introspection**
+    * [x]  Create a module in `database_agent/schema_inspector.py`.
     * [ ]  Implement functions to:
         * [ ]  Fetch the list of tables in the Supabase database.
         * [ ]  Fetch the columns and their data types for a given table.
         * [ ]  Store the schema in an appropriate data structure (e.g., a dictionary).
 
-* **Task 6: Implement Dynamic Pydantic Model Generation**
-    * [ ]  Create a module in `models/model_generator.py`.
-    * [ ]  Implement a function `create_pydantic_model(table_name: str, columns: dict) -> Type[BaseModel]`:
-        * [ ]  Takes a table name and a dictionary of column names and their data types.
-        * [ ]  Dynamically creates a Pydantic model class with fields corresponding to the columns.
+* **Task 7: Implement Dynamic Pydantic Model Generation & Caching**
+    * [x]  Create a module in `models/model_generator.py`.
+    * [x]  Implement a function `get_or_create_model(table: str, columns: dict) -> Type[BaseModel]`:
+        * [x]  Takes a table name and a dictionary of column names and their data types.
+        * [x]  Dynamically creates a Pydantic model class with fields corresponding to the columns.
         * [ ]  Handles mapping Supabase data types to Pydantic field types.
-        * [ ]  Adds a `Config` class to allow population by alias, if needed.
-
-* **Task 7: Implement Model Caching**
-    * [ ]  In `models/model_generator.py`, implement a caching mechanism for the generated Pydantic models.
-    * [ ]  Store models in a dictionary with the table name as the key.
-    * [ ]  Implement functions to:
-        * [ ]  Retrieve a model from the cache if it exists.
-        * [ ]  Add a model to the cache.
-        * [ ]  Clear the cache (to be used when the schema changes).
+        * [x]  Adds a `Config` class to allow population by alias, if needed.
+    * [x]  Implement a caching mechanism for generated models.
+    * [ ]  Implement cache clearing on schema change.
 
 ## III. Core Workflows: Insert/Upsert and Fetch/List
 
 * **Task 8: Implement Category Classification**
-    * [ ]  Create a module in `database_agent/category_classifier.py`.
-    * [ ]  Implement a function `classify_category(data: dict, existing_categories: List[str]) -> str`:
-        * [ ]  Takes the input data and a list of existing category names.
-        * [ ]  Uses PydanticAI to interact with the LLM.
-        * [ ]  Constructs a prompt (see "LLM Prompt Testing" below).
+    * [x]  Create a module in `database_agent/category_classifier.py`.
+    * [x]  Implement a function `classify_category(data: dict, existing_categories: List[str]) -> str`:
+        * [x]  Takes the input data and a list of existing category names.
+        * [x]  Uses PydanticAI to interact with the LLM.
+        * [x]  Constructs a prompt (see "LLM Prompt Testing" below).
         * [ ]  Parses the LLM response to extract the category.
         * [ ]  Returns the suggested category.
 
@@ -80,7 +85,7 @@ This document outlines the tasks required to implement the DatabaseAgent as desc
         * [ ]  Handles potential errors (e.g., database errors, validation errors).
 
 * **Task 11: Implement Fetch/List Handler**
-    * [ ]  In `database_agent/database_operations.py`, implement a function `handle_fetch(table_name: str, filters: dict = None) -> dict`:
+    * [ ]  In `database_agent/agent.py`, implement a function `handle_fetch(table: str, filters: dict = None) -> dict`:
         * [ ]  Takes the table name and optional filters.
         * [ ]  Constructs a Supabase query using `.select()` and `.filter()` (if filters are provided).
         * [ ]  Executes the query.
@@ -88,33 +93,44 @@ This document outlines the tasks required to implement the DatabaseAgent as desc
         * [ ]  Constructs and returns a response dictionary (see "Response Schema" in the plan).
         * [ ]  Handles the case where no data is found.
 
-## IV. Schema Evolution
+## IV. Schema Evolution and Utility
 
-* **Task 12: Implement Schema Evolution Handler**
-    * [ ]  Create a module in `database_agent/schema_evolution.py`.
-    * [ ]  Implement a function `handle_schema_command(command: dict) -> dict`:
-        * [ ]  Takes a dictionary representing the schema command (e.g., `{ "type": "add_column", "table": "my_table", "column": "new_column", "data_type": "text" }`).
-        * [ ]  Validates the command structure.
-        * [ ]  If the command type is "add_column":
-            * [ ]  Executes the `ALTER TABLE ... ADD COLUMN` SQL command using the Supabase client's `.rpc()` or `.sql.execute()` method.
-            * [ ]  Clears the Pydantic model cache for the table.
-            * [ ]  Returns a success/failure message.
-        * [ ]  If the command type is "create_table":
-            * [ ]  Executes the `CREATE TABLE ...` SQL command using the Supabase client's `.rpc()` or `.sql.execute()` method.
-             * [ ]  Clears the Pydantic model cache.
-            * [ ]  Returns a success/failure message.
-        * [ ]  Handles errors (e.g., invalid command, database errors).
+* **Task 12: Implement Schema Command Handler**
+    * [ ]  In `database_agent/database_operations.py`, implement a function `handle_schema_command(command: dict) -> dict`:
+        * [ ]  Handles CREATE TABLE and ADD COLUMN requests.
+        * [ ]  Issues the corresponding SQL via Supabase.
+        * [ ]  Refreshes the model cache.
+        * [ ]  Returns a structured response.
 
-## V. Agent Interface and Testing
+## V. Testing and Validation
 
-* **Task 13: Implement Agent Interface**
-    * [ ]  Create a module in `database_agent/agent.py`.
-    * [ ]  Create a class `DatabaseAgent` with the following methods:
-        * [ ]  `handle_insert(data: dict, schema_changes: bool = False) -> dict`: Calls the `handle_insert` function from `database_operations.py`.
-        * [ ]  `handle_fetch(table: str, filters: dict = None) -> dict`: Calls the `handle_fetch` function from `database_operations.py`.
-        * [ ]  `handle_schema_command(command: dict) -> dict`: Calls the `handle_schema_command` function from `schema_evolution.py`.
+* **Task 13: Write Unit and Integration Tests**
+    * [ ]  Mirror the app structure under `/tests`.
+    * [ ]  Add unit tests for:
+        * [ ]  Supabase client
+        * [ ]  Schema introspection
+        * [ ]  Model generation and caching
+        * [ ]  Category classification
+        * [ ]  Insert/upsert handler
+        * [ ]  Fetch/list handler
+        * [ ]  Schema command handler
 
-* **Task 14: Implement LLM Prompt Testing**
+* **Task 14: Integration Testing**
+    * [ ]  Validate end-to-end flows against a test Supabase instance.
+
+## VI. Logging, Error Handling, and Documentation
+
+* **Task 15: Logging and Exception Handling**
+    * [ ]  Add robust logging throughout the agent.
+    * [ ]  Ensure clear, structured error responses.
+
+* **Task 16: Documentation**
+    * [ ]  Update README with setup, usage, and details.
+    * [ ]  Document environment variable requirements in `.env.example`.
+
+## VII. LLM Prompt Testing
+
+* **Task 17: Implement LLM Prompt Testing**
     * [ ]  Create a file `prompts.md`.
     * [ ]  Document the prompt used in the `classify_category` function.
     * [ ]  Include example inputs (data and existing categories) and expected LLM outputs.
@@ -143,22 +159,6 @@ This document outlines the tasks required to implement the DatabaseAgent as desc
         Existing categories: ["electronics", "clothing", "books"]
         Data: {"name": "Gardening Gloves", "type": "work"}
         Output: home_and_garden
-        ```
-
-* **Task 15: Implement Integration Tests**
-    * [ ]  Create test files in the `tests/` directory.
-    * [ ]  Write integration tests to validate the end-to-end workflows:
-        * [ ]  Test inserting data with and without schema changes.
-        * [ ]  Test fetching data with and without filters.
-        * [ ]  Test adding columns and creating tables.
-        * [ ]  Test the category classification with various inputs.
-    * [ ]  Use a test Supabase instance for the tests.
-    * [ ]  Use a testing framework like `pytest`.
-    * [ ]  Ensure tests cover success and failure scenarios.
-
-## VI. Documentation
-
-* **Task 16: Update README.md**
     * [ ]  Update the project's `README.md` file with:
         * [ ]  A description of the DatabaseAgent.
         * [ ]  Instructions on how to set up the project (including environment variables).

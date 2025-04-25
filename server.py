@@ -41,11 +41,15 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers - or list specific headers for better security
 )
 
+from pydantic import ConfigDict
+
 class Question(BaseModel):
+    model_config = ConfigDict(extra='forbid')
     message: str
 
 # Define a response model for clarity (optional but good practice)
 class Answer(BaseModel):
+    model_config = ConfigDict(extra='forbid')
     response: str | dict # Agent might return string or dict
 
 @app.post("/ask", response_model=Answer)

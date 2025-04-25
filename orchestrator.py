@@ -24,6 +24,10 @@ primary_agent = Agent(
     Analyze the user request and delegate the work to the appropriate subagent."""
 )
 
+# Register DatabaseAgent tools so the orchestrator can call them
+from agents.subagents import register_database_agent_tools
+register_database_agent_tools(primary_agent)
+
 # ========== Define tools for the primary agent to call subagents ==========
 
 @primary_agent.tool_plain

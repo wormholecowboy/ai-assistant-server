@@ -8,6 +8,7 @@ from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.models.gemini import GeminiModel
 from pydantic_ai.mcp import MCPServerStdio
 from pydantic_ai import Agent
+from database_agent.response_models import DatabaseAgentResponse
 
 load_dotenv()
 
@@ -67,12 +68,36 @@ github_agent = Agent(
     mcp_servers=[github_server]
 )
 
+# Database agent (Python-only, no MCP server)
+from agents.database_agent_subagent import handle_insert, handle_fetch, handle_schema_command
+
 # # Firecrawl agent (Commented out)
 # firecrawl_agent = Agent(
 #     get_model(),
 #     system_prompt="You are a web crawling specialist. Help users extract data from websites.",
 #     mcp_servers=[firecrawl_server]
 # )
+
+# Register DatabaseAgent tools for orchestrator
+
+def register_database_agent_tools(primary_agent):
+    """
+    Register DatabaseAgent tool functions with the orchestrator's primary agent.
+    """
+    @primary_agent.tool_plain
+    async def use_database_insert(table: str, data: dict, schema_changes: bool = False) -> DatabaseAgentResponse:
+        """Insert or upsert a record using DatabaseAgent."""
+        return await handle_insert(table, data, schema_changes)
+
+    @primary_agent.tool_plain
+    async def use_database_fetch(table: str, filters: dict = None) -> DatabaseAgentResponse:
+        """Fetch records using DatabaseAgent."""
+        return await handle_fetch(table, filters)
+
+    @primary_agent.tool_plain
+    async def use_database_schema_command(command: dict) -> DatabaseAgentResponse:
+        """Handle schema evolution commands using DatabaseAgent."""
+        return await handle_schema_command(command)
 
 # ========== MCP Server Management ==========
 # Store the stack globally to manage it across lifespan events
