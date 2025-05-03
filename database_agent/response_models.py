@@ -8,8 +8,7 @@ class DatabaseAgentResponse(BaseModel):
     """
     Standard response schema for DatabaseAgent tool outputs.
     """
-    model_config = ConfigDict(extra='forbid')
     success: bool
     message: str
-    data: Optional[Any] = None
-    error: Optional[Any] = None
+    data: Optional[dict] = None # Changed from Any
+    error: Optional[dict] = None # Changed from Any

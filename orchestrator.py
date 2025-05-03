@@ -1,6 +1,7 @@
 from __future__ import annotations
 from dotenv import load_dotenv
 from pydantic_ai import Agent
+from pydantic import BaseModel, ConfigDict # Added import
 
 from agents.subagents import register_database_agent_tools
 from agents.subagents import (
@@ -20,10 +21,13 @@ primary_agent = Agent(
     Analyze the user request and delegate the work to the appropriate subagent."""
 )
 
+# Define strict response models for non-database tools
+class SubAgentResponse(BaseModel):
+    result: str
 register_database_agent_tools(primary_agent)
 
 @primary_agent.tool_plain
-async def use_brave_search_agent(query: str) -> dict[str, str]:
+async def use_brave_search_agent(query: str) -> SubAgentResponse: # Use the new model
     """
     Search the web using Brave Search through the Brave subagent.
     Use this tool when the user needs to find information on the internet or research a topic.
@@ -37,10 +41,10 @@ async def use_brave_search_agent(query: str) -> dict[str, str]:
     print(f"Calling Brave agent with query: {query}")
     result = await brave_agent.run(query)
     # Ensure result.data is serializable (string or dict usually)
-    return {"result": str(result.data) if result.data else "No result from Brave agent."}
+    return SubAgentResponse(result=str(result.data) if result.data else "No result from Brave agent.") # Instantiate the model
 
 @primary_agent.tool_plain
-async def use_filesystem_agent(query: str) -> dict[str, str]:
+async def use_filesystem_agent(query: str) -> SubAgentResponse: # Use the new model
     """
     Interact with the file system through the filesystem subagent.
     Use this tool when the user needs to read, write, list, or modify files.
@@ -53,10 +57,10 @@ async def use_filesystem_agent(query: str) -> dict[str, str]:
     """
     print(f"Calling Filesystem agent with query: {query}")
     result = await filesystem_agent.run(query)
-    return {"result": str(result.data) if result.data else "No result from Filesystem agent."}
+    return SubAgentResponse(result=str(result.data) if result.data else "No result from Filesystem agent.") # Instantiate the model
 
 @primary_agent.tool_plain
-async def use_github_agent(query: str) -> dict[str, str]:
+async def use_github_agent(query: str) -> SubAgentResponse: # Use the new model
     """
     Interact with GitHub through the GitHub subagent.
     Use this tool when the user needs to access repositories, issues, PRs, or other GitHub resources.
@@ -69,7 +73,7 @@ async def use_github_agent(query: str) -> dict[str, str]:
     """
     print(f"Calling GitHub agent with query: {query}")
     result = await github_agent.run(query)
-    return {"result": str(result.data) if result.data else "No result from GitHub agent."}
+    return SubAgentResponse(result=str(result.data) if result.data else "No result from GitHub agent.") # Instantiate the model
 
 # @primary_agent.tool_plain # Commented out
 # async def use_firecrawl_agent(query: str) -> dict[str, str]:

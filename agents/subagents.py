@@ -7,6 +7,7 @@ from pydantic_ai.providers.openai import OpenAIProvider
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.models.gemini import GeminiModel
 from pydantic_ai.mcp import MCPServerStdio
+from typing import Dict, Any, Optional # Added imports
 from pydantic_ai import Agent
 from database_agent.response_models import DatabaseAgentResponse
 
@@ -85,17 +86,17 @@ def register_database_agent_tools(primary_agent):
     Register DatabaseAgent tool functions with the orchestrator's primary agent.
     """
     @primary_agent.tool_plain
-    async def use_database_insert(table: str, data: dict, schema_changes: bool = False) -> DatabaseAgentResponse:
+    async def use_database_insert(table: str, data: Dict[str, Any], schema_changes: bool = False) -> DatabaseAgentResponse: # Changed dict to Dict[str, Any]
         """Insert or upsert a record using DatabaseAgent."""
         return await handle_insert(table, data, schema_changes)
 
     @primary_agent.tool_plain
-    async def use_database_fetch(table: str, filters: dict = None) -> DatabaseAgentResponse:
+    async def use_database_fetch(table: str, filters: Optional[Dict[str, Any]] = None) -> DatabaseAgentResponse: # Changed dict to Optional[Dict[str, Any]]
         """Fetch records using DatabaseAgent."""
         return await handle_fetch(table, filters)
 
     @primary_agent.tool_plain
-    async def use_database_schema_command(command: dict) -> DatabaseAgentResponse:
+    async def use_database_schema_command(command: Dict[str, Any]) -> DatabaseAgentResponse: # Changed dict to Dict[str, Any]
         """Handle schema evolution commands using DatabaseAgent."""
         return await handle_schema_command(command)
 

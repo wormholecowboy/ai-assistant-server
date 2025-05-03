@@ -14,7 +14,6 @@ def get_or_create_model(table: str, columns: Dict[str, str]) -> Type[BaseModel]:
     model = create_model(
         f"{table.title()}Model",
         **fields,
-        model_config=ConfigDict(extra='forbid')
     )
     _model_cache[table] = model
     return model

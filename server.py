@@ -37,11 +37,9 @@ app.add_middleware(
 
 
 class Question(BaseModel):
-    model_config = ConfigDict(extra=None)
     message: str
 
 class Answer(BaseModel):
-    model_config = ConfigDict(extra=None)
     response: str | dict
 
 @app.post("/ask", response_model=Answer)
@@ -57,6 +55,7 @@ async def ask(question: Question):
         # Use primary_agent.run() for a single response
         # If you needed streaming, you'd use primary_agent.run_stream()
         # and return a StreamingResponse from FastAPI
+        print(f"Message passed to agent: {question.message}") # Added log for clarity
         result = await primary_agent.run(question.message)
         print(f"Primary agent response: {result.data}")
         response_data = result.data if result.data is not None else "Agent did not return data."
