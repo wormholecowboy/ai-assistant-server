@@ -15,11 +15,11 @@ load_dotenv()
 
 # ========== Helper function to get model configuration ==========
 def get_model():
-    llm = 'gemini-2.5-pro-exp-03-25'
-    base_url = os.getenv('BASE_URL', 'https://generativelanguage.googleapis.com')
+    model_name = 'gemini-2.5-flash-preview-04-17'
+    base_url = os.getenv('BASE_URL', 'https://generativelanguage.googleapis.com/v1beta/openai')
     api_key = os.getenv('GEMINI_API_KEY', 'no-api-key-provided')
-
-    return GeminiModel(llm, provider="google-gla")
+    model = OpenAIModel(model_name, provider=OpenAIProvider(base_url=base_url, api_key=api_key))
+    return model
 
 # ========== Set up MCP servers for each service ==========
 

@@ -3,10 +3,9 @@ Category classification using LLM via PydanticAI.
 """
 from typing import List, Dict
 from pydantic_ai import Agent
-from pydantic_ai.models.gemini import GeminiModel
+from agents.subagents import get_model
 
-model = GeminiModel('gemini-2.5-pro-exp', provider='google-gla')
-agent = Agent(model)
+agent = Agent(get_model())
 
 def classify_category(data: Dict, existing_categories: List[str]) -> str:
     prompt = f"""Given the following data: {data}, and these categories: {existing_categories}, suggest the best category or a new concise one."""
