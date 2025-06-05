@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from pydantic_ai import Agent
 from pydantic import BaseModel, ConfigDict # Added import
 
-from agents.subagents import register_database_agent_tools
+from agents.database_agent_subagent import db_agent
 from agents.subagents import (
     brave_agent,
     filesystem_agent,
@@ -14,6 +14,7 @@ from agents.subagents import (
 
 load_dotenv()
 
+# Orchestrator is now a PydanticAI Agent
 primary_agent = Agent(
     get_model(),
     system_prompt="""You are a primary orchestration agent that can call upon specialized subagents 
@@ -21,10 +22,12 @@ primary_agent = Agent(
     Analyze the user request and delegate the work to the appropriate subagent."""
 )
 
+# Register all database tools from db_agent as tools of the orchestrator
+primary_agent.include_tools_from(db_agent)
+
 # Define strict response models for non-database tools
 class SubAgentResponse(BaseModel):
     result: str
-register_database_agent_tools(primary_agent)
 
 @primary_agent.tool_plain
 async def use_brave_search_agent(query: str) -> SubAgentResponse: # Use the new model
