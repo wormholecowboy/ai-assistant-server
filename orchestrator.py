@@ -22,9 +22,6 @@ primary_agent = Agent(
     Analyze the user request and delegate the work to the appropriate subagent."""
 )
 
-# Register all database tools from db_agent as tools of the orchestrator
-primary_agent.include_tools_from(db_agent)
-
 # Define strict response models for non-database tools
 class SubAgentResponse(BaseModel):
     result: str
@@ -77,22 +74,3 @@ async def use_github_agent(query: str) -> SubAgentResponse: # Use the new model
     print(f"Calling GitHub agent with query: {query}")
     result = await github_agent.run(query)
     return SubAgentResponse(result=str(result.data) if result.data else "No result from GitHub agent.") # Instantiate the model
-
-# @primary_agent.tool_plain # Commented out
-# async def use_firecrawl_agent(query: str) -> dict[str, str]:
-#     """
-#     Crawl and analyze websites using the Firecrawl subagent.
-#     Use this tool when the user needs to extract data from websites or perform web scraping.
-#
-#     Args:
-#         query: The instruction for the Firecrawl agent.
-#
-#     Returns:
-#         The response from the Firecrawl agent.
-#     """
-#     print(f"Calling Firecrawl agent with query: {query}")
-#     result = await firecrawl_agent.run(query)
-#     return {"result": str(result.data) if result.data else "No result from Firecrawl agent."}
-
-# Note: MCP Server Management (start_mcp_servers, stop_mcp_servers, _mcp_stack)
-# has been moved to agents/subagents.py

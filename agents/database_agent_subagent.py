@@ -3,12 +3,12 @@ DatabaseAgent subagent for orchestrator integration.
 """
 from pydantic import BaseModel
 from pydantic_ai import Agent
-from database_agent.agent import DatabaseAgent
+from database_agent.database_operations import handle_insert as _handle_insert, handle_fetch as _handle_fetch, handle_schema_command as _handle_schema_command
 from database_agent.response_models import DatabaseAgentResponse
-from typing import Optional, Dict
+from typing import Optional, Dict, Any
+from agents.subagents import get_model
 
-_db_agent = DatabaseAgent()
-db_agent = Agent()
+db_agent = Agent(get_model())
 
 class InsertInput(BaseModel):
     table: str
@@ -22,7 +22,7 @@ class FetchInput(BaseModel):
 class SchemaCommandInput(BaseModel):
     command: Dict
 
-@db_agent.tool
+@db_agent.tool_plain
 async def insert(inputs: InsertInput) -> DatabaseAgentResponse:
     """
     Insert or upsert a record in the specified table.
@@ -33,10 +33,10 @@ async def insert(inputs: InsertInput) -> DatabaseAgentResponse:
     Returns:
         DatabaseAgentResponse: The result of the insert operation.
     """
-    result = _db_agent.handle_insert(inputs.table, inputs.data, inputs.schema_changes)
+    result = _handle_insert(inputs.table, inputs.data, inputs.schema_changes)
     return DatabaseAgentResponse(**result)
 
-@db_agent.tool
+@db_agent.tool_plain
 async def fetch(inputs: FetchInput) -> DatabaseAgentResponse:
     """
     Fetch records from the specified table with optional filters.
@@ -47,10 +47,10 @@ async def fetch(inputs: FetchInput) -> DatabaseAgentResponse:
     Returns:
         DatabaseAgentResponse: The result of the fetch operation.
     """
-    result = _db_agent.handle_fetch(inputs.table, inputs.filters)
+    result = _handle_fetch(inputs.table, inputs.filters)
     return DatabaseAgentResponse(**result)
 
-@db_agent.tool
+@db_agent.tool_plain
 async def schema_command(inputs: SchemaCommandInput) -> DatabaseAgentResponse:
     """
     Handle schema evolution commands (e.g., add column, create table).
@@ -61,5 +61,5 @@ async def schema_command(inputs: SchemaCommandInput) -> DatabaseAgentResponse:
     Returns:
         DatabaseAgentResponse: The result of the schema command operation.
     """
-    result = _db_agent.handle_schema_command(inputs.command)
+    result = _handle_schema_command(inputs.command)
     return DatabaseAgentResponse(**result)
