@@ -3,7 +3,7 @@ Category classification using LLM via PydanticAI.
 """
 from typing import List, Dict
 from pydantic_ai import Agent
-from agents.subagents import get_model
+from ..shared import get_model
 
 agent = Agent(get_model())
 

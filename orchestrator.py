@@ -4,18 +4,15 @@ from pydantic_ai import Agent
 from pydantic import BaseModel, ConfigDict # Added import
 
 from agents.database_agent_subagent import db_agent
-from agents.subagents import (
-    brave_agent,
-    filesystem_agent,
-    github_agent,
-    # firecrawl_agent, # Commented out
-    get_model
-)
+from agents.brave_agent import brave_agent
+from agents.filesystem_agent import filesystem_agent
+from agents.github_agent import github_agent
+from agents.shared import get_model
 
 load_dotenv()
 
 # Orchestrator is now a PydanticAI Agent
-primary_agent = Agent(
+orchestrator = Agent(
     get_model(),
     system_prompt="""You are a primary orchestration agent that can call upon specialized subagents 
     to perform various tasks. Each subagent is an expert in interacting with a specific third-party service.
@@ -26,7 +23,7 @@ primary_agent = Agent(
 class SubAgentResponse(BaseModel):
     result: str
 
-@primary_agent.tool_plain
+@orchestrator.tool_plain
 async def use_brave_search_agent(query: str) -> SubAgentResponse: # Use the new model
     """
     Search the web using Brave Search through the Brave subagent.
@@ -43,7 +40,7 @@ async def use_brave_search_agent(query: str) -> SubAgentResponse: # Use the new 
     # Ensure result.data is serializable (string or dict usually)
     return SubAgentResponse(result=str(result.data) if result.data else "No result from Brave agent.") # Instantiate the model
 
-@primary_agent.tool_plain
+@orchestrator.tool_plain
 async def use_filesystem_agent(query: str) -> SubAgentResponse: # Use the new model
     """
     Interact with the file system through the filesystem subagent.
@@ -59,7 +56,7 @@ async def use_filesystem_agent(query: str) -> SubAgentResponse: # Use the new mo
     result = await filesystem_agent.run(query)
     return SubAgentResponse(result=str(result.data) if result.data else "No result from Filesystem agent.") # Instantiate the model
 
-@primary_agent.tool_plain
+@orchestrator.tool_plain
 async def use_github_agent(query: str) -> SubAgentResponse: # Use the new model
     """
     Interact with GitHub through the GitHub subagent.

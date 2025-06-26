@@ -5,7 +5,7 @@ from typing import Dict, Any, Optional
 from .supabase_client import get_supabase_client
 from .category_classifier import classify_category
 from .schema_inspector import fetch_table_schema
-from models.model_generator import get_or_create_model, clear_model_cache
+from ...models.model_generator import get_or_create_model, clear_model_cache
 
 # --- Category Persistence ---
 def category_exists(category: str) -> bool:

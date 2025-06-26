@@ -3,10 +3,10 @@ DatabaseAgent subagent for orchestrator integration.
 """
 from pydantic import BaseModel
 from pydantic_ai import Agent
-from database_agent.database_operations import handle_insert as _handle_insert, handle_fetch as _handle_fetch, handle_schema_command as _handle_schema_command
-from database_agent.response_models import DatabaseAgentResponse
+from .supabase.database_operations import handle_insert as _handle_insert, handle_fetch as _handle_fetch, handle_schema_command as _handle_schema_command
+from .supabase.response_models import DatabaseAgentResponse
 from typing import Optional, Dict, Any
-from agents.subagents import get_model
+from .shared import get_model
 
 db_agent = Agent(get_model())
 

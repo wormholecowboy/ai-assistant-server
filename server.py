@@ -7,8 +7,8 @@ from contextlib import asynccontextmanager
 from dotenv import load_dotenv
 from pydantic import ConfigDict
 
-from orchestrator import primary_agent
-from agents.subagents import start_mcp_servers, stop_mcp_servers
+from orchestrator import orchestrator
+from agents.mcp_manager import start_mcp_servers, stop_mcp_servers
 
 load_dotenv()
 
@@ -56,7 +56,7 @@ async def ask(question: Question):
         # If you needed streaming, you'd use primary_agent.run_stream()
         # and return a StreamingResponse from FastAPI
         print(f"Message passed to agent: {question.message}") # Added log for clarity
-        result = await primary_agent.run(question.message)
+        result = await orchestrator.run(question.message)
         print(f"Primary agent response: {result.data}")
         response_data = result.data if result.data is not None else "Agent did not return data."
 
