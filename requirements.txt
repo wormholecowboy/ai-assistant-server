@@ -1,6 +1,7 @@
 # Core framework
 fastapi[standard]
 uvicorn
+a2a-sdk
 
 # Data validation
 pydantic==2.11.1

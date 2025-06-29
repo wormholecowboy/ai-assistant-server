@@ -9,6 +9,7 @@ from pydantic import ConfigDict
 
 from orchestrator import orchestrator
 from agents.mcp_manager import start_mcp_servers, stop_mcp_servers
+from _a2a_server_manager import start_all_a2a_servers, stop_all_a2a_servers
 
 load_dotenv()
 
@@ -16,9 +17,11 @@ load_dotenv()
 async def lifespan(app: FastAPI):
     print("Application startup: Initializing MCP servers...")
     await start_mcp_servers()
+    await start_all_a2a_servers()
     yield
     print("Application shutdown: Cleaning up MCP servers...")
     await stop_mcp_servers()
+    await stop_all_a2a_servers()
 
 app = FastAPI(lifespan=lifespan) # Apply the lifespan manager
 
