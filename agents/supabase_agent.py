@@ -88,6 +88,6 @@ class SupabaseAgent:
            which means you can create and edit tables.""",
            tools=[insert, fetch, schema_command])
 
-    def invoke(self, query: str, context_id: str) -> DatabaseAgentResponse:
+    def invoke(self, query: str) -> DatabaseAgentResponse:
         return self.agent.run_sync(query)
 

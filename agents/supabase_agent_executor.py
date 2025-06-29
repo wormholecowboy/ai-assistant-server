@@ -33,9 +33,6 @@ class SupbaseAgentExecutor(AgentExecutor):
             print(f'Final Result ===> {result}')
         except Exception as e:
             print('Error invoking agent: %s', e)
-            raise ServerError(
-                error=ValueError(f'Error invoking agent: {e}')
-            ) from e
 
         await event_queue.enqueue_event(
             completed_task(

@@ -3,13 +3,11 @@ from dotenv import load_dotenv
 from pydantic_ai import Agent
 from pydantic import BaseModel, ConfigDict # Added import
 
-from agents.database_agent_subagent import db_agent
-from agents.brave_agent import brave_agent
-from agents.filesystem_agent import filesystem_agent
-from agents.github_agent import github_agent
 from agents.shared import get_model
 
 load_dotenv()
+
+## wrap searcher and executor agents in funcs for tool use
 
 # Orchestrator is now a PydanticAI Agent
 orchestrator = Agent(
@@ -23,51 +21,3 @@ orchestrator = Agent(
 class SubAgentResponse(BaseModel):
     result: str
 
-@orchestrator.tool_plain
-async def use_brave_search_agent(query: str) -> SubAgentResponse: # Use the new model
-    """
-    Search the web using Brave Search through the Brave subagent.
-    Use this tool when the user needs to find information on the internet or research a topic.
-
-    Args:
-        query: The search query or instruction for the Brave search agent.
-
-    Returns:
-        The search results or response from the Brave agent.
-    """
-    print(f"Calling Brave agent with query: {query}")
-    result = await brave_agent.run(query)
-    # Ensure result.data is serializable (string or dict usually)
-    return SubAgentResponse(result=str(result.data) if result.data else "No result from Brave agent.") # Instantiate the model
-
-@orchestrator.tool_plain
-async def use_filesystem_agent(query: str) -> SubAgentResponse: # Use the new model
-    """
-    Interact with the file system through the filesystem subagent.
-    Use this tool when the user needs to read, write, list, or modify files.
-
-    Args:
-        query: The instruction for the filesystem agent.
-
-    Returns:
-        The response from the filesystem agent.
-    """
-    print(f"Calling Filesystem agent with query: {query}")
-    result = await filesystem_agent.run(query)
-    return SubAgentResponse(result=str(result.data) if result.data else "No result from Filesystem agent.") # Instantiate the model
-
-@orchestrator.tool_plain
-async def use_github_agent(query: str) -> SubAgentResponse: # Use the new model
-    """
-    Interact with GitHub through the GitHub subagent.
-    Use this tool when the user needs to access repositories, issues, PRs, or other GitHub resources.
-
-    Args:
-        query: The instruction for the GitHub agent.
-
-    Returns:
-        The response from the GitHub agent.
-    """
-    print(f"Calling GitHub agent with query: {query}")
-    result = await github_agent.run(query)
-    return SubAgentResponse(result=str(result.data) if result.data else "No result from GitHub agent.") # Instantiate the model
