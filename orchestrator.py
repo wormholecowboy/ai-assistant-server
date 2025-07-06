@@ -1,13 +1,19 @@
 from __future__ import annotations
+import agent_registry
 from dotenv import load_dotenv
 from pydantic_ai import Agent
-from pydantic import BaseModel, ConfigDict # Added import
+from pydantic import BaseModel
 
 from agents.shared import get_model
+from agent_searcher import agent_searcher
 
 load_dotenv()
 
-## wrap searcher and executor agents in funcs for tool use
+async def search_and_find_agents():
+    pass
+
+async def use_agent():
+    pass
 
 # Orchestrator is now a PydanticAI Agent
 orchestrator = Agent(
@@ -20,4 +26,9 @@ orchestrator = Agent(
 # Define strict response models for non-database tools
 class SubAgentResponse(BaseModel):
     result: str
+
+@orchestrator.tool
+     async def run_agent_searcher(ctx: RunContext, query: str) -> SubAgentResponse:
+         return await agent_searcher.run_sync(query)
+
 
