@@ -1,6 +1,6 @@
 from contextlib import AsyncExitStack
 
-from supabase_a2a_server import supabase_a2a_main
+from .supabase_a2a_server import supabase_a2a_main
 
 agent_stack = AsyncExitStack()
 

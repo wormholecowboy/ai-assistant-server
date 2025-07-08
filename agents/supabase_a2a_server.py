@@ -9,7 +9,7 @@ from a2a.types import (
     AgentSkill,
 )
 
-from supabase_agent_executor import SupbaseAgentExecutor
+from .supabase_agent_executor import SupbaseAgentExecutor
 from agent_registry import registry
 
 def supabase_a2a_main():

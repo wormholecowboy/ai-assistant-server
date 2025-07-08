@@ -15,7 +15,7 @@ from a2a.utils import (
     new_artifact,
 )
 from a2a.utils.errors import ServerError
-from supabase_agent import SupabaseAgent
+from .supabase_agent import SupabaseAgent
 
 class SupbaseAgentExecutor(AgentExecutor):
     def __init__(self):

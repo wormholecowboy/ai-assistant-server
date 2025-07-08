@@ -1,15 +1,13 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from fastapi import FastAPI, HTTPException
-from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
-import uvicorn # Add this import
+import uvicorn
 from contextlib import asynccontextmanager
 from dotenv import load_dotenv
-from pydantic import ConfigDict
 
 from orchestrator import orchestrator
 from agents.mcp_manager import start_mcp_servers, stop_mcp_servers
-from _a2a_server_manager import start_all_a2a_servers, stop_all_a2a_servers
+from agents._a2a_server_manager import start_all_a2a_servers, stop_all_a2a_servers
 
 load_dotenv()
 

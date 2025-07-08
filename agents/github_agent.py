@@ -19,18 +19,18 @@ github_agent = Agent(
     mcp_servers=[github_server] if github_server else []
 )
 
-# temp to save desc
-async def use_github_agent(query: str) -> SubAgentResponse: # Use the new model
-    """
-    Interact with GitHub through the GitHub subagent.
-    Use this tool when the user needs to access repositories, issues, PRs, or other GitHub resources.
-
-    Args:
-        query: The instruction for the GitHub agent.
-
-    Returns:
-        The response from the GitHub agent.
-    """
-    print(f"Calling GitHub agent with query: {query}")
-    result = await github_agent.run(query)
-    return SubAgentResponse(result=str(result.data) if result.data else "No result from GitHub agent.") # Instantiate the model
+# # temp to save desc
+# async def use_github_agent(query: str) -> SubAgentResponse: # Use the new model
+#     """
+#     Interact with GitHub through the GitHub subagent.
+#     Use this tool when the user needs to access repositories, issues, PRs, or other GitHub resources.
+#
+#     Args:
+#         query: The instruction for the GitHub agent.
+#
+#     Returns:
+#         The response from the GitHub agent.
+#     """
+#     print(f"Calling GitHub agent with query: {query}")
+#     result = await github_agent.run(query)
+#     return SubAgentResponse(result=str(result.data) if result.data else "No result from GitHub agent.") # Instantiate the model

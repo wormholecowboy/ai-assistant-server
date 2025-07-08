@@ -20,19 +20,18 @@ brave_agent = Agent(
 )
 
 ## temp to save desc
-async def use_brave_search_agent(query: str) -> SubAgentResponse: # Use the new model
-    """
-    Search the web using Brave Search through the Brave subagent.
-    Use this tool when the user needs to find information on the internet or research a topic.
-
-    Args:
-        query: The search query or instruction for the Brave search agent.
-
-    Returns:
-        The search results or response from the Brave agent.
-    """
-    print(f"Calling Brave agent with query: {query}")
-    result = await brave_agent.run(query)
-    # Ensure result.data is serializable (string or dict usually)
-    return SubAgentResponse(result=str(result.data) if result.data else "No result from Brave agent.") # Instantiate the model
-
+# async def use_brave_search_agent(query: str) -> SubAgentResponse: # Use the new model
+#     """
+#     Search the web using Brave Search through the Brave subagent.
+#     Use this tool when the user needs to find information on the internet or research a topic.
+#
+#     Args:
+#         query: The search query or instruction for the Brave search agent.
+#
+#     Returns:
+#         The search results or response from the Brave agent.
+#     """
+#     print(f"Calling Brave agent with query: {query}")
+#     result = await brave_agent.run(query)
+#     # Ensure result.data is serializable (string or dict usually)
+#     return SubAgentResponse(result=str(result.data) if result.data else "No result from Brave agent.") # Instantiate the model

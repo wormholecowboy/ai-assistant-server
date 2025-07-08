@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, List
 from pydantic import BaseModel
 from pydantic_ai import Agent, RunContext
 from pydantic_ai.models.openai import OpenAIModel
@@ -7,25 +7,21 @@ import httpx
 
 from agents.shared import get_model
 
-class AgentOutput(BaseModel):
-    agent_url: str
-
 agent_searcher = Agent(
     get_model(),
     system_prompt="""Your job is to search through a list of agent cards, 
     which will have descriptions and URLs of agents, and determine which agent to use for a given query.
     Use the get_agent_cards tool to get a list of agent cards. You should ONLY return the URL of the chosen agent.""",
-    output_type=AgentOutput
 )
 
 @agent_searcher.tool_plain
-async def get_agent_cards() -> list(str):
+async def get_agent_cards() -> List[str]:
     """
     Searches through an agent registry of A2A agent cards and determines which agent to use for the query.
     """
     agent_card_urls = []
     for agent_card in registry:
-        card_url = f'http://localhost:{agent_card["PORT"]}/.well-known/agent.json'
+        card_url = f'http://localhost:{registry[agent_card]["PORT"]}/.well-known/agent.json'
         agent_card_urls.append(card_url)
 
     agent_cards = []
