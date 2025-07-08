@@ -18,7 +18,6 @@ agent_searcher = Agent(
     output_type=AgentOutput
 )
 
-
 @agent_searcher.tool_plain
 async def get_agent_cards() -> list(str):
     """
