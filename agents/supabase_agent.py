@@ -1,3 +1,4 @@
+from pydantic_ai.agent import AgentRunResult
 from a2a.server.agent_execution import AgentExecutor, RequestContext
 from a2a.server.events import EventQueue
 from a2a.types import (
@@ -85,9 +86,9 @@ class SupabaseAgent:
             get_model(),
            system_prompt="""You are a database specialist. Help users manage their database. You have access to several tools to 
            complete all of the basic CRUD functions. You can use the insert, fetch, and schema_command tools to perform these actions,
-           which means you can create and edit tables.""",
+           which means you can create and edit tables. Always respond with whether or not the action was successful.""",
            tools=[insert, fetch, schema_command])
 
-    def invoke(self, query: str) -> DatabaseAgentResponse:
+    def invoke(self, query: str) -> AgentRunResult[str]:
         return self.agent.run_sync(query)
 

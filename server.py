@@ -37,29 +37,29 @@ app.add_middleware(
 )
 
 
-class Question(BaseModel):
+class UserQuery(BaseModel):
     message: str
 
 class Answer(BaseModel):
     response: str | dict
 
 @app.post("/ask", response_model=Answer)
-async def ask(question: Question):
+async def ask(message: UserQuery):
     """
     Receives a question or command and routes it to the primary orchestration agent.
     """
-    if not question.message:
+    if not message.message:
         raise HTTPException(status_code=400, detail="Message cannot be empty")
 
     try:
-        print(f"Received request for primary agent: {question.message}")
+        print(f"Received request for orchestrator: {message.message}")
         # Use primary_agent.run() for a single response
         # If you needed streaming, you'd use primary_agent.run_stream()
         # and return a StreamingResponse from FastAPI
-        print(f"Message passed to agent: {question.message}") # Added log for clarity
-        result = await orchestrator.run(question.message)
-        print(f"Primary agent response: {result.data}")
-        response_data = result.data if result.data is not None else "Agent did not return data."
+        print(f"Message passed to orchestrator: {message.message}") # Added log for clarity
+        result = await orchestrator.run(message.message, deps=message.message)
+        print(f"Orchestrator agent response: {result.output}")
+        response_data = result.output if result.output is not None else "Agent did not return data."
 
         # If the agent returns a dict (e.g., from a tool call),
         # ensure it's handled correctly. For now, we wrap it.
@@ -70,7 +70,7 @@ async def ask(question: Question):
              return Answer(response=str(response_data))
 
     except Exception as e:
-        print(f"Error processing request with primary agent: {e}")
+        print(f"Error processing request with orchestrator: {e}")
         # Consider more specific error handling based on potential agent errors
         raise HTTPException(status_code=500, detail=f"Agent processing error: {str(e)}")
 

@@ -15,9 +15,9 @@ agent_searcher = Agent(
 )
 
 @agent_searcher.tool_plain
-async def get_agent_cards() -> List[str]:
+async def get_agent_cards() -> List[Any]:
     """
-    Searches through an agent registry of A2A agent cards and determines which agent to use for the query.
+    Returns a list of agent cards.
     """
     agent_card_urls = []
     for agent_card in registry:
@@ -36,5 +36,3 @@ async def get_agent_cards() -> List[str]:
     
     print(agent_cards)
     return agent_cards
-
-
