@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import Any
 
 from dotenv import load_dotenv
 from pydantic import BaseModel
@@ -32,9 +33,12 @@ class SubAgentResponse(BaseModel):
     result: str
 
 @orchestrator.tool
-async def search_through_agents(ctx: RunContext[str]) -> SubAgentResponse:
+async def search_through_agents(ctx: RunContext[str]) -> Any:
+    print("Running agent searcher...")
+    print(f"Context: {ctx.deps}")
     result = await agent_searcher.run(ctx.deps)
-    return SubAgentResponse(result=str(result))
+    # result.all_messages()
+    return result
 #
 # @orchestrator.tool
 # async def run_agent_runner(ctx: RunContext[Deps]) -> SubAgentResponse:

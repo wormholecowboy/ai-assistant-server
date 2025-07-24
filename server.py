@@ -58,7 +58,7 @@ async def ask(message: UserQuery):
         # and return a StreamingResponse from FastAPI
         print(f"Message passed to orchestrator: {message.message}") # Added log for clarity
         result = await orchestrator.run(message.message, deps=message.message)
-        print(f"Orchestrator agent response: {result.output}")
+        print(f"Orchestrator agent response: {result}")
         response_data = result.output if result.output is not None else "Agent did not return data."
 
         # If the agent returns a dict (e.g., from a tool call),

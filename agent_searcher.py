@@ -34,5 +34,5 @@ async def get_agent_cards() -> List[Any]:
             else:
                 print(f"Failed to fetch agent card from {url}")
     
-    print(agent_cards)
+    print(f"Found agent cards: {agent_cards}")
     return agent_cards
