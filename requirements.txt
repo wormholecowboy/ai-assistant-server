@@ -4,30 +4,30 @@ uvicorn
 a2a-sdk
 
 # Data validation
-pydantic==2.11.1
+pydantic
 
 # AI/LLM agent framework
-pydantic-ai==0.0.46
+pydantic-ai
 # The following are optional/experimental. Remove if not used in codebase:
 # pydantic-ai-slim==0.0.46
 # pydantic-graph==0.0.46
 # pydantic-settings==2.8.1
-pydantic_core==2.33.0
+pydantic_core
 
 # Database/ORM
 supabase  # supabase-python for Supabase support (version pin removed for compatibility)
 
 # Utilities
-python-dateutil==2.9.0.post0
-python-dotenv==1.1.0
-PyYAML==6.0.2
-requests==2.32.3
-rich==14.0.0
+python-dateutil
+python-dotenv
+PyYAML
+requests
+rich
 
 # LLM providers and tools
 openai  # version pin removed for compatibility
 mcp  # version pin removed for compatibility
-mdurl==0.1.2
+mdurl
 
 # If you use Google Gemini, add the appropriate package
 # google-genai
